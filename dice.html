@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dice Roller</title>
+  <style>
+    body {
+      text-align: center;
+    }
+
+    #diceRoller {
+      margin-top: 20px;
+    }
+     #diceContainer {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+     }
+
+    .diceRow {
+      display: flex;
+      justify-content: center;
+    }
+
+    img {
+      margin: 5px; /* Add margin between dice */
+    }
+
+    table {
+      margin-top: 20px;
+      border-collapse: collapse;
+      width: 50%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    th, td {
+      border: 1px solid #dddddd;
+      text-align: center;
+      padding: 8px;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    #rollButton {
+      display: block;
+      margin: 20px auto;
+    }
+
+  </style>
+  </style>
+</head>
+<body>
+  <h1 id="diceRoller">Dice Roller</h1>
+
+  <div id="diceContainer"></div>
+
+  <table>
+    <tr>
+      <th>Face</th>
+      <th>Probability</th>
+    </tr>
+    <!-- Face 1 to Face 12 will be dynamically added here -->
+  </table>
+
+  <button id="rollButton">Roll 12 Dice</button>
+
+  <script>
+    function start() {
+      var button = document.getElementById("rollButton");
+      button.addEventListener("click", rollDice, false);
+    }
+
+    function rollDice() {
+      // Number of dice
+      var numOfDice = 12;
+
+      // Clear existing dice, probability display, and table
+      clearDiceAndProbability();
+
+      // Roll each die and set the corresponding image
+      var results = [];
+      for (var i = 1; i <= numOfDice; i++) {
+        var result = Math.floor(Math.random() * 6) + 1; // Random number between 1 and 6
+        setImage(i, result);
+        results.push(result);
+      }
+
+      // Calculate and display the probability distribution
+      displayProbabilityDistribution(results);
+    }
+
+    function setImage(dieNumber, face) {
+      // Assuming you have an "images" folder in the same directory as this HTML file
+      var imageSrc = "image/die" + face + ".png"; // Corrected the image path
+
+      // Create an image element
+      var image = document.createElement("img");
+      image.src = imageSrc;
+      image.alt = "Dice " + face;
+
+      // Append the image to the dice container
+      var diceContainer = document.getElementById("diceContainer");
+
+      // Check if a new row needs to be created
+      if (dieNumber % 6 === 1) {
+        var diceRow = document.createElement("div");
+        diceRow.className = "diceRow";
+        diceContainer.appendChild(diceRow);
+      }
+
+      // Append the image to the current row
+      var currentRow = diceContainer.lastChild;
+      currentRow.appendChild(image);
+    }
+
+    function clearDiceAndProbability() {
+      // Remove all existing dice, probability display, and table
+      var diceContainer = document.getElementById("diceContainer");
+      diceContainer.innerHTML = "";
+
+      var table = document.querySelector("table");
+      table.innerHTML = "<tr><th>Face</th><th>Probability</th></tr>";
+    }
+
+    function displayProbabilityDistribution(results) {
+      var probabilityCounts = Array(6).fill(0);
+
+      // Count occurrences of each face
+      results.forEach(function (result) {
+        probabilityCounts[result - 1]++;
+      });
+
+      // Display probability distribution in the table
+      var table = document.querySelector("table");
+      for (var i = 0; i < 6; i++) {
+        var probability = (probabilityCounts[i] / results.length) * 100;
+        table.innerHTML += `<tr><td>Face ${i + 1}</td><td>${probability.toFixed(2)}%</td></tr>`;
+      }
+    }
+
+    window.addEventListener("load", start, false);
+  </script>
+
+</body>
+</html>
